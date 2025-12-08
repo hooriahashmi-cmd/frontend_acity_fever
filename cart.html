@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - Acity Campus</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>BISTRO <i class="fas fa-utensils"></i></h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html">Home</a>
+                <a href="menu.html">Menu</a>
+                <a href="#">About us</a>
+                <a href="#">Contact</a>
+            </nav>
+            <div class="header-actions">
+                <button class="cart-btn" onclick="window.location.href='cart.html'">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </button>
+                <div class="user-icon" onclick="logout()">
+                    <i class="far fa-user"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="cart-section">
+        <div class="container">
+            <div class="cart-header">
+                <h1><i class="fas fa-shopping-cart"></i> Shopping & Orders</h1>
+                <button class="continue-shopping-btn" onclick="window.location.href='menu.html'">
+                    <i class="fas fa-arrow-left"></i> Continue Shopping
+                </button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="cart-tabs">
+                <button class="cart-tab-btn active" onclick="switchCartTab('cart')">
+                    <i class="fas fa-shopping-cart"></i> My Cart
+                </button>
+                <button class="cart-tab-btn" onclick="switchCartTab('orders')">
+                    <i class="fas fa-receipt"></i> Order History
+                </button>
+            </div>
+
+            <!-- CART TAB -->
+            <div id="cartTab">
+                <!-- Empty Cart Message -->
+                <div class="empty-cart" id="emptyCart" style="display: none;">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h2>Your cart is empty</h2>
+                    <p>Add some delicious items from our menu</p>
+                    <button class="order-now-btn" onclick="window.location.href='menu.html'">
+                        Browse Menu
+                    </button>
+                </div>
+
+                <div class="cart-content" id="cartContent">
+                    <div class="cart-items" id="cartItems">
+                    </div>
+
+                    <div class="cart-summary-box">
+                        <h2>Order Summary</h2>
+                        
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span class="summary-value">GH₵ <span id="subtotal">0.00</span></span>
+                        </div>
+                        
+                        <div class="summary-row">
+                            <span>Delivery Fee</span>
+                            <span class="summary-value">GH₵ <span id="deliveryFee">5.00</span></span>
+                        </div>
+                        
+                        <div class="summary-row total-row">
+                            <span>Total</span>
+                            <span class="summary-value">GH₵ <span id="totalAmount">0.00</span></span>
+                        </div>
+
+                        <div class="delivery-info">
+                            <i class="fas fa-info-circle"></i>
+                            <p>Delivery to: <strong id="deliveryRoom">Room not set</strong></p>
+                        </div>
+
+                        <button class="checkout-btn-large" onclick="proceedToCheckout()">
+                            Proceed to Checkout
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+
+                        <button class="clear-cart-btn" onclick="clearCart()">
+                            <i class="fas fa-trash"></i> Clear Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ORDERS TAB -->
+            <div id="ordersTab" style="display: none;">
+                <div class="orders-container">
+                    <div id="ordersContent">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function switchCartTab(tab) {
+            const cartTab = document.getElementById('cartTab');
+            const ordersTab = document.getElementById('ordersTab');
+            const tabBtns = document.querySelectorAll('.cart-tab-btn');
+
+            if (tab === 'cart') {
+                cartTab.style.display = 'block';
+                ordersTab.style.display = 'none';
+                tabBtns[0].classList.add('active');
+                tabBtns[1].classList.remove('active');
+            } else {
+                cartTab.style.display = 'none';
+                ordersTab.style.display = 'block';
+                tabBtns[0].classList.remove('active');
+                tabBtns[1].classList.add('active');
+                displayUserOrders();
+            }
+        }
+    </script>
+
+    <script src="script.js"></script>
+</body>
+</html>
