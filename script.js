@@ -1,7 +1,5 @@
 
-// ============================================
 // MENU DATA
-// ============================================
 const menuItems = [
     {
         id: 1,
@@ -93,11 +91,7 @@ const menuItems = [
     }
 ];
 
-// Global cart variable
 let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-
-// UTILITY FUNCTIONS
 function showError(message) {
     const errorDiv = document.getElementById('errorMsg');
     if (errorDiv) {
@@ -137,7 +131,7 @@ function getAdminUser() {
 }
 
 
-// LOGIN & REGISTRATION HANDLERS
+// Lgin and Registration
 function goToLogin() {
     window.location.href = 'login.html';
 }
@@ -160,7 +154,7 @@ function logoutAdmin() {
     window.location.href = 'login.html';
 }
 
-function handleLogin(e) {
+async function handleLogin(e) {
     e.preventDefault();
 
     const email = document.getElementById('email').value.trim();
@@ -176,26 +170,40 @@ function handleLogin(e) {
         return;
     }
 
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const user = users.find(u => u.email === email && u.password === password);
+    try {
+        const response = await fetch('http://localhost:5000/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        });
 
-    if (user) {
-        localStorage.setItem('currentUser', JSON.stringify({
-            name: user.name,
-            email: user.email,
-            roomNumber: user.roomNumber
-        }));
-        
-        showSuccess('Login successful! Redirecting...');
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 1500);
-    } else {
-        showError('Invalid email or password');
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('currentUser', JSON.stringify({
+                id: data.user.id,
+                name: data.user.name,
+                email: data.user.email,
+                roomNumber: data.user.roomNumber
+            }));
+            
+            showSuccess('Login successful! Redirecting...');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        } else {
+            showError(data.error || 'Invalid email or password');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        showError('Login failed. Please check your connection and try again.');
     }
 }
 
-function handleRegister(e) {
+async function handleRegister(e) {
     e.preventDefault();
 
     const fullName = document.getElementById('regName').value.trim();
@@ -224,36 +232,43 @@ function handleRegister(e) {
         return;
     }
 
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const existingUser = users.find(u => u.email === email);
+    try {
+        const response = await fetch('http://localhost:5000/api/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: fullName,
+                email: email,
+                room_number: roomNumber,
+                password: password
+            })
+        });
 
-    if (existingUser) {
-        showError('An account with this email already exists');
-        return;
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('currentUser', JSON.stringify({
+                id: data.user.id,
+                name: data.user.name,
+                email: data.user.email,
+                roomNumber: data.user.roomNumber
+            }));
+
+            showSuccess('Account created successfully.');
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
+        } else {
+            showError(data.error || 'Registration failed');
+        }
+    } catch (error) {
+        console.error('Registration error:', error);
+        showError('Registration failed.');
     }
-
-    const newUser = {
-        name: fullName,
-        email: email,
-        roomNumber: roomNumber,
-        password: password,
-        createdAt: new Date().toISOString()
-    };
-
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
-
-    localStorage.setItem('currentUser', JSON.stringify({
-        name: newUser.name,
-        email: newUser.email,
-        roomNumber: newUser.roomNumber
-    }));
-
-    showSuccess(' Account created successfully. Redirecting...');
-    
-    setTimeout(() => {
-        window.location.href = 'index.html';
-    }, 2000);
 }
 
 function handleAdminLogin(e) {
@@ -263,7 +278,7 @@ function handleAdminLogin(e) {
     const password = document.getElementById('adminPassword').value;
 
     if (!username || !password) {
-        showError('Please fill in all fields');
+        showError('Please fill all fields');
         return;
     }
 
@@ -511,7 +526,7 @@ function displayUserOrders() {
         document.getElementById('ordersContent').innerHTML = `
             <div class="empty-orders">
                 <i class="fas fa-lock"></i>
-                <h2>Please login to view orders</h2>
+                <h2>Please login to view orders if you are done</h2>
                 <button class="login-btn" onclick="window.location.href='login.html'">Go to Login</button>
             </div>
         `;
@@ -792,9 +807,7 @@ function logoutUser() {
     window.location.href = 'index.html';
 }
 
-// ============================================
-// PAGE INITIALIZATION
-// ============================================
+// Pages
 
 document.addEventListener('DOMContentLoaded', () => {
     // LOGIN FORM
@@ -803,13 +816,13 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.addEventListener('submit', handleLogin);
     }
 
-    // REGISTRATION FORM
+    // Registration form
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
         registerForm.addEventListener('submit', handleRegister);
     }
 
-    // ADMIN LOGIN FORM
+    // Admin login form
     const adminLoginForm = document.getElementById('adminLoginForm');
     if (adminLoginForm) {
         adminLoginForm.addEventListener('submit', handleAdminLogin);
@@ -821,11 +834,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         loadAdminDashboard();
     }
-
-    // Update cart count on all pages
     updateCartUI();
 
-    // HOME PAGE BUTTONS
+    // Home page
     const orderBtn = document.querySelector('.order-btn');
     if (orderBtn) {
         orderBtn.addEventListener('click', () => {
@@ -862,7 +873,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // MENU PAGE
+    // Menu page
     const menuGrid = document.getElementById('menuGrid');
     if (menuGrid) {
         displayMenuItems();
@@ -889,14 +900,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('cartItems')) {
         displayCartItems();
         
-        // Checkout button
         const checkoutBtn = document.querySelector('.checkout-btn');
         if (checkoutBtn && checkoutBtn.textContent === 'Proceed to Checkout') {
             checkoutBtn.addEventListener('click', proceedToCheckout);
         }
     }
-
-    // Close modals on outside click
     document.addEventListener('click', (e) => {
         if (e.target.id === 'statusModal') {
             closeStatusModal();

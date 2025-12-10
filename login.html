@@ -2,10 +2,11 @@
 <html lang="en">
 
 <head>
+    <!-- // Head Section -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Acity Campus</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
@@ -13,7 +14,7 @@
     <header class="header">
         <div class="container">
             <div class="logo">
-                <h1>BISTRO <i class="fas fa-utensils"></i></h1>
+                <h1>Academic City Fever <i class="fas fa-utensils"></i></h1>
             </div>
             <nav class="nav">
                 <a href="index.html">Home</a>
@@ -28,6 +29,7 @@
         </div>
     </header>
 
+    <!-- // Body Section -->
     <section class="login-section">
         <div class="container">
             <div class="login-tabs">
@@ -35,6 +37,8 @@
                 <button class="tab-btn" onclick="switchTab('register')">Register</button>
                 <button class="tab-btn" onclick="switchTab('admin')">Admin</button>
             </div>
+
+<!-- // Login Cards -->
 
             <div class="login-card" id="loginTab">
                 <h2>Welcome Back</h2>
@@ -67,6 +71,8 @@
                 </div>
             </div>
 
+            <!-- // Register Card -->
+
             <div class="login-card" id="registerTab" style="display: none;">
                 <h2>Create Account</h2>
                 <p>Join us and start ordering delicious meals</p>
@@ -96,6 +102,7 @@
                     <button type="submit" class="login-btn">Create Account</button>
                 </form>
 
+
                 <div class="signup-link">
                     Already have an account? <a href="#" onclick="switchTab('login')">Login here</a>
                 </div>
@@ -103,7 +110,8 @@
 
             <div class="login-card" id="adminTab" style="display: none;">
                 <h2>Admin Dashboard</h2>
-                <p>Log in with your admin credentials to manage orders.</p>
+
+                <p>Log in with your admin credentials to manage orders Acitizen.</p>
 
                 <form id="adminLoginForm">
                     <div class="input-group">
@@ -138,13 +146,13 @@
             const adminTab = document.getElementById('adminTab');
             const tabBtns = document.querySelectorAll('.tab-btn');
 
-            // Hide all tabs
+            
             loginTab.style.display = 'none';
             registerTab.style.display = 'none';
             adminTab.style.display = 'none';
             tabBtns.forEach(btn => btn.classList.remove('active'));
 
-            // Show selected tab
+            
             if (tab === 'login') {
                 loginTab.style.display = 'block';
                 tabBtns[0].classList.add('active');
