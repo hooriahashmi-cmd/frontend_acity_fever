@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - Acity Campus</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>Acity <i class="fas fa-utensils"></i></h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html">Home</a>
+
+            </nav>
+            <div class="header-actions">
+                <button class="cart-btn" onclick="window.location.href='cart.html'">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </button>
+                <div class="user-icon" onclick="logout()">
+                    <i class="far fa-user"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="menu-section">
+        <div class="container">
+            <div class="menu-header">
+                <h1>Our Menu</h1>
+                <p>Delicious meals from campus cafeterias</p>
+            </div>
+
+            <div class="category-filters">
+                <button class="filter-btn active" data-category="all">All Items</button>
+                <button class="filter-btn" data-category="breakfast">Breakfast</button>
+                <button class="filter-btn" data-category="lunch">Lunch</button>
+                <button class="filter-btn" data-category="dinner">Dinner</button>
+                <button class="filter-btn" data-category="drinks">Drinks</button>
+                <button class="filter-btn" data-category="desserts">Desserts</button>
+            </div>
+
+            <div class="menu-grid" id="menuGrid">
+            </div>
+        </div>
+    </section>
+
+    <div class="cart-summary" id="cartSummary">
+        <div class="cart-summary-content">
+            <div class="cart-info">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cartItemCount">0 items</span>
+                <span class="cart-total">GH₵ <span id="cartTotal">0.00</span></span>
+            </div>
+            <button class="checkout-btn" onclick="goToCart()">View Cart</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

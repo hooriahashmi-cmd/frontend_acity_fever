@@ -19,8 +19,8 @@ body {
 
 /* Header */
 .header {
-    background-color: #111010;
-    color: rgb(190, 182, 182);
+    background-color: #3c2219;
+    color: white;
     padding: 1rem 0;
     position: fixed;
     width: 100%;
@@ -2206,14 +2206,14 @@ body {
 }
 
 .timeline-step.completed:not(:last-child)::after {
-    background: #388156;
+    background: #27ae60;
 }
 
 .timeline-marker {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background: #836b6b;
+    background: #ddd;
     border: 2px solid white;
     z-index: 1;
     position: relative;
