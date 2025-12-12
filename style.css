@@ -374,29 +374,44 @@ body {
 
 /* Error and Success Messages */
 .error-message,
-.success-message {
+.success-message,
+.error-msg,
+.success-msg {
     padding: 12px 15px;
     border-radius: 8px;
     margin-bottom: 15px;
     display: none;
     font-size: 0.95rem;
     animation: slideIn 0.3s ease;
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.error-message {
+.error-message,
+.error-msg {
     background-color: #fee;
     color: #c33;
     border: 1px solid #fcc;
 }
 
-.success-message {
+.success-message,
+.success-msg {
     background-color: #efe;
     color: #3c3;
     border: 1px solid #cfc;
 }
 
 .error-message.show,
-.success-message.show {
+.success-message.show,
+.error-msg.show,
+.success-msg.show {
     display: block;
 }
 

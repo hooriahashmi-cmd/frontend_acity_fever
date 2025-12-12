@@ -8,7 +8,7 @@ const menuItems = [
         description: "Juicy beef patty with lettuce, tomato, and special sauce",
         price: 25.00,
         category: "lunch",
-        image: "assets/burgerss.jpg" 
+        image: "assets/burgerss.jpg"
     },
     {
         id: 2,
@@ -192,19 +192,19 @@ async function handleLogin(e) {
                 id: data.user.id,
                 name: data.user.name,
                 email: data.user.email,
-                roomNumber: data.user.roomNumber
+                room_number: data.user.room_number
             }));
-            
+
             showSuccess('Login successful! Redirecting...');
             setTimeout(() => {
-                window.location.href = 'index.html';
+                window.location.href = 'menu.html';
             }, 1500);
         } else {
             showError(data.error || 'Invalid email or password');
         }
     } catch (error) {
         console.error('Login error:', error);
-        showError('Login failed. Please check your connection and try again.');
+        showError('Login failed: ' + error.message);
     }
 }
 
@@ -213,11 +213,11 @@ async function handleRegister(e) {
 
     const fullName = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim();
-    const roomNumber = document.getElementById('regRoom').value.trim();
+    const room_number = document.getElementById('regRoom').value.trim();
     const password = document.getElementById('regPassword').value;
     const confirmPassword = document.getElementById('regConfirmPassword').value;
 
-    if (!fullName || !email || !roomNumber || !password || !confirmPassword) {
+    if (!fullName || !email || !room_number || !password || !confirmPassword) {
         showError('Please fill in all fields');
         return;
     }
@@ -246,7 +246,7 @@ async function handleRegister(e) {
             body: JSON.stringify({
                 name: fullName,
                 email: email,
-                room_number: roomNumber,
+                room_number: room_number,
                 password: password
             })
         });
@@ -259,20 +259,20 @@ async function handleRegister(e) {
                 id: data.user.id,
                 name: data.user.name,
                 email: data.user.email,
-                roomNumber: data.user.roomNumber
+                room_number: data.user.room_number
             }));
 
             showSuccess('Account created successfully. Redirecting...');
-            
+
             setTimeout(() => {
-                window.location.href = 'index.html';
+                window.location.href = 'menu.html';
             }, 2000);
         } else {
             showError(data.error || 'Registration failed');
         }
     } catch (error) {
         console.error('Registration error:', error);
-        showError('Registration failed. Please check your connection and try again.');
+        showError('Registration failed: ' + error.message);
     }
 }
 
@@ -299,7 +299,7 @@ function handleAdminLogin(e) {
             username: username,
             loginTime: new Date().toISOString()
         }));
-        
+
         sessionStorage.setItem('isAdmin', 'true');
 
         showSuccess('Login successful. Redirecting...');
@@ -316,8 +316,8 @@ function displayMenuItems(category = 'all') {
     const menuGrid = document.getElementById('menuGrid');
     if (!menuGrid) return;
 
-    const filteredItems = category === 'all' 
-        ? menuItems 
+    const filteredItems = category === 'all'
+        ? menuItems
         : menuItems.filter(item => item.category === category);
 
     menuGrid.innerHTML = filteredItems.map(item => `
@@ -345,7 +345,7 @@ function addToCart(itemId) {
     if (!item) return;
 
     const existingItem = cart.find(i => i.id === itemId);
-    
+
     if (existingItem) {
         existingItem.quantity += 1;
     } else {
@@ -372,13 +372,13 @@ function showCartNotification(itemName) {
         <i class="fas fa-check-circle"></i>
         <span>${itemName} added to cart!</span>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.classList.add('show');
     }, 10);
-    
+
     setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => notification.remove(), 300);
@@ -392,7 +392,7 @@ function displayCartItems() {
 
     const emptyCart = document.getElementById('emptyCart');
     const cartContent = document.getElementById('cartContent');
-    
+
     if (cart.length === 0) {
         cartContent.style.display = 'none';
         emptyCart.style.display = 'block';
@@ -510,7 +510,7 @@ function proceedToCheckout() {
         deliveryFee: deliveryFee,
         total: total,
         userEmail: currentUser.email,
-        userRoom: currentUser.roomNumber,
+        userRoom: currentUser.room_number,
         userName: currentUser.name
     };
 
@@ -631,7 +631,7 @@ function displayUserOrders() {
 
 function loadAdminDashboard() {
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-    
+
     const pending = orders.filter(o => o.status === 'pending').length;
     const preparing = orders.filter(o => o.status === 'preparing').length;
     const ready = orders.filter(o => o.status === 'ready').length;
@@ -653,10 +653,10 @@ function loadAdminDashboard() {
 function loadRecentOrders() {
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
     const recentOrdersList = document.getElementById('recentOrdersList');
-    
+
     if (!recentOrdersList) return;
 
-    const ordersNeedingAttention = orders.filter(o => 
+    const ordersNeedingAttention = orders.filter(o =>
         ['pending', 'preparing', 'ready'].includes(o.status)
     ).slice(0, 5);
 
@@ -696,7 +696,7 @@ function openStatusModal(orderId, currentStatus) {
     currentModalOrderId = orderId;
     currentModalStatus = currentStatus;
     document.getElementById('modalOrderId').textContent = orderId;
-    
+
     document.querySelectorAll('.status-option-btn').forEach(btn => {
         btn.classList.remove('selected');
         const btnStatus = btn.className.match(/pending|preparing|ready|completed/)?.[0];
@@ -782,11 +782,11 @@ function saveStatusUpdate() {
 
     alert(`Order #${currentModalOrderId} updated to ${capitalizeStatus(currentModalStatus)}`);
     loadAdminDashboard();
-    
+
     if (document.getElementById('ordersTableBody')) {
         loadAllOrdersTable();
     }
-    
+
     closeStatusModal();
 }
 
@@ -886,7 +886,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuGrid = document.getElementById('menuGrid');
     if (menuGrid) {
         displayMenuItems();
-        
+
         const filterBtns = document.querySelectorAll('.filter-btn');
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -908,7 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // CART PAGE
     if (document.getElementById('cartItems')) {
         displayCartItems();
-        
+
         // Checkout button
         const checkoutBtn = document.querySelector('.checkout-btn');
         if (checkoutBtn && checkoutBtn.textContent === 'Proceed to Checkout') {
