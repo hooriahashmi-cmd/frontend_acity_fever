@@ -1,11 +1,12 @@
-import { User, Lock, ChevronRight, Activity } from 'lucide-react';
+import React, { useState } from 'react';
+import { User, Lock, ChevronRight, Activity, UserPlus } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 
-const Login = () => {
+const Register = () => {
     const navigate = useNavigate();
-    const [role, setRole] = useState('admin');
-    const [credentials, setCredentials] = useState({ username: '', password: '' });
+    const [role, setRole] = useState('patient');
+    const [credentials, setCredentials] = useState({ username: '', password: '', confirmPassword: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -17,13 +18,19 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (credentials.password !== credentials.confirmPassword) {
+            return setError('Passwords do not match');
+        }
+
         setLoading(true);
         setError('');
 
         try {
-            const { data } = await api.post('/auth/login', {
+            const { data } = await api.post('/auth/register', {
                 username: credentials.username,
                 password: credentials.password,
+                role: role
             });
 
             // Save token and user info
@@ -32,7 +39,7 @@ const Login = () => {
 
             navigate('/dashboard');
         } catch (err) {
-            setError(err.response?.data?.error || 'Login failed. Please try again.');
+            setError(err.response?.data?.error || 'Registration failed. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -40,22 +47,21 @@ const Login = () => {
 
     return (
         <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4">
-            {/* Background decoration */}
             <div className="absolute top-0 left-0 w-full h-1/2 bg-[#2563eb] rounded-b-[40px] -z-10"></div>
 
             <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden transform transition-all hover:scale-[1.01]">
                 <div className="p-8">
                     <div className="flex justify-center mb-6">
                         <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center">
-                            <Activity className="w-10 h-10 text-blue-600" />
+                            <UserPlus className="w-10 h-10 text-blue-600" />
                         </div>
                     </div>
 
                     <h1 className="text-3xl font-bold text-center text-gray-900 mb-2">
-                        Welcome Back
+                        Create Account
                     </h1>
                     <p className="text-center text-gray-500 mb-8">
-                        Please sign in to your HMS account
+                        Join our Hospital Management System
                     </p>
 
                     <div className="flex bg-gray-100 p-1 rounded-xl mb-8">
@@ -79,7 +85,7 @@ const Login = () => {
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
                             <div className="relative">
@@ -90,7 +96,7 @@ const Login = () => {
                                     value={credentials.username}
                                     onChange={handleInputChange}
                                     className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
-                                    placeholder="Enter your username"
+                                    placeholder="Choose a username"
                                     required
                                 />
                             </div>
@@ -112,21 +118,34 @@ const Login = () => {
                             </div>
                         </div>
 
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                            <div className="relative">
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                <input
+                                    type="password"
+                                    name="confirmPassword"
+                                    value={credentials.confirmPassword}
+                                    onChange={handleInputChange}
+                                    className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                                    placeholder="••••••••"
+                                    required
+                                />
+                            </div>
+                        </div>
+
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all flex items-center justify-center group"
+                            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all flex items-center justify-center group mt-4"
                         >
-                            {loading ? 'Signing in...' : 'Login'}
+                            {loading ? 'Creating account...' : 'Register'}
                             {!loading && <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />}
                         </button>
                     </form>
 
                     <div className="mt-8 text-center text-sm text-gray-500">
-                        Don't have an account? <Link to="/register" className="text-blue-600 font-semibold hover:underline">Register Now</Link>
-                    </div>
-                    <div className="mt-2 text-center text-sm text-gray-500">
-                        Forgot your password? <a href="#" className="text-blue-600 font-semibold hover:underline">Reset it</a>
+                        Already have an account? <Link to="/login" className="text-blue-600 font-semibold hover:underline">Sign In</Link>
                     </div>
                 </div>
 
@@ -138,4 +157,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Register;

@@ -47,6 +47,58 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// POST /auth/register
+router.post('/register', async (req, res) => {
+    const { username, password, role } = req.body;
+
+    if (!username || !password || !role) {
+        return res.status(400).json({ error: 'Username, password, and role are required' });
+    }
+
+    if (!['admin', 'doctor', 'patient'].includes(role)) {
+        return res.status(400).json({ error: 'Invalid role' });
+    }
+
+    try {
+        // Check if user already exists
+        const { data: existingUser } = await supabase
+            .from('users')
+            .select('username')
+            .eq('username', username)
+            .single();
+
+        if (existingUser) {
+            return res.status(400).json({ error: 'Username already taken' });
+        }
+
+        // Hash password
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        // Insert user
+        const { data: newUser, error } = await supabase
+            .from('users')
+            .insert([{ username, password: passwordHash, role }])
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        // Sign JWT
+        const token = jwt.sign(
+            { id: newUser.id, username: newUser.username, role: newUser.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '8h' }
+        );
+
+        res.status(201).json({
+            token,
+            user: { id: newUser.id, username: newUser.username, role: newUser.role }
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'Registration failed', details: err.message });
+    }
+});
+
 // POST /auth/seed — create an initial admin user (run once, then remove or protect)
 router.post('/seed', async (req, res) => {
     try {
