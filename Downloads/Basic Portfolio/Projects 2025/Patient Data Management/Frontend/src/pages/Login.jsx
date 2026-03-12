@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { User, Lock, ChevronRight, Activity } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
