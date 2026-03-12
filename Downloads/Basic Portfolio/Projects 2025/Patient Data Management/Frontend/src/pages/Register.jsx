@@ -39,7 +39,9 @@ const Register = () => {
 
             navigate('/dashboard');
         } catch (err) {
-            setError(err.response?.data?.error || 'Registration failed. Please try again.');
+            const serverError = err.response?.data?.error || err.response?.data?.details;
+            const message = serverError ? `${serverError}` : `Registration failed (${err.message || 'Network error'})`;
+            setError(message);
         } finally {
             setLoading(false);
         }
