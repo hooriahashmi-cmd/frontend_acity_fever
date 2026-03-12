@@ -60,11 +60,21 @@ router.post('/register', async (req, res) => {
     }
 
     try {
+        if (!process.env.JWT_SECRET) {
+            console.error('MISSING JWT_SECRET in environment variables');
+            return res.status(500).json({ error: 'Server configuration error (JWT)' });
+        }
+
         // Check if user already exists
-        const { data: existingUsers } = await supabase
+        const { data: existingUsers, error: checkError } = await supabase
             .from('users')
             .select('username')
             .eq('username', username);
+
+        if (checkError) {
+            console.error('Supabase check error:', checkError);
+            throw checkError;
+        }
 
         if (existingUsers && existingUsers.length > 0) {
             return res.status(400).json({ error: 'Username already taken' });
@@ -74,13 +84,16 @@ router.post('/register', async (req, res) => {
         const passwordHash = await bcrypt.hash(password, 10);
 
         // Insert user
-        const { data: newUser, error } = await supabase
+        const { data: newUser, error: insertError } = await supabase
             .from('users')
             .insert([{ username, password: passwordHash, role }])
             .select()
             .single();
 
-        if (error) throw error;
+        if (insertError) {
+            console.error('Supabase insert error:', insertError);
+            throw insertError;
+        }
 
         // Sign JWT
         const token = jwt.sign(
@@ -94,7 +107,8 @@ router.post('/register', async (req, res) => {
             user: { id: newUser.id, username: newUser.username, role: newUser.role }
         });
     } catch (err) {
-        res.status(500).json({ error: 'Registration failed', details: err.message });
+        console.error('Registration Catch Block Error:', err);
+        res.status(500).json({ error: 'Registration failed', details: err.message, stack: process.env.NODE_ENV === 'development' ? err.stack : undefined });
     }
 });
 
