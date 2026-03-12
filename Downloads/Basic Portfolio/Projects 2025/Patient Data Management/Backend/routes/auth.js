@@ -61,13 +61,12 @@ router.post('/register', async (req, res) => {
 
     try {
         // Check if user already exists
-        const { data: existingUser } = await supabase
+        const { data: existingUsers } = await supabase
             .from('users')
             .select('username')
-            .eq('username', username)
-            .single();
+            .eq('username', username);
 
-        if (existingUser) {
+        if (existingUsers && existingUsers.length > 0) {
             return res.status(400).json({ error: 'Username already taken' });
         }
 
